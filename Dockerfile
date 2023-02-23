@@ -10,7 +10,6 @@ RUN pip3 install --no-cache-dir -r /requirements.txt
 FROM dependecies
 
 COPY . /SimpleTGBot
-COPY .env ./SimpleTGBot/.env
 WORKDIR /SimpleTGBot
 
 ENV PYTHONUNBUFFERED 1
