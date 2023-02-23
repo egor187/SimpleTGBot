@@ -13,18 +13,20 @@ class WebhookView(View):
     """Handle bot behavior regardless to incoming tg update"""
 
     @staticmethod
-    def parse_number(request):
-        message = json.loads(request.body)
-        if message.get('message') and message.get('message').get('contact'):
-            return message.get('message').get('contact')['phone_number']
+    def get_payload(request):
+        request = json.loads(request.body)
+        message = request.get('message')
+        contact = message.get('contact')
+        if message and contact:
+            return {'phone': contact['phone_number'], 'login': message.get('from', {}).get('username')}
 
     def post(self, request):
         message = json.loads(request.body)
         BaseBot(settings.BOT_TOKEN).process_update(message)
-        contact = self.parse_number(request)
-        if contact:
+        payload = self.get_payload(request)
+        if payload:
             try:
-                requests.post(settings.RECEIVER_URL, json=message.get('message').get('contact')['phone_number']).raise_for_status()
+                requests.post(settings.RECEIVER_URL, json=payload).raise_for_status()
             except requests.exceptions.HTTPError:
                 JsonResponse({'status': 'external service error'})
         return JsonResponse({'status': 'ok'})
