@@ -23,7 +23,7 @@ class WebhookView(View):
     def post(self, request):
         message = json.loads(request.body)
         BaseBot(settings.BOT_TOKEN).process_update(message)
-        payload = self.get_payload(request)
+        payload = self.get_payload(message)
         if payload:
             try:
                 requests.post(settings.RECEIVER_URL, json=payload).raise_for_status()
