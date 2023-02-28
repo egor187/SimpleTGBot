@@ -14,7 +14,7 @@ class WebhookView(View):
 
     @staticmethod
     def get_payload(request):
-        request = json.loads(request.body)
+        print(request)
         message = request.get('message')
         contact = message.get('contact')
         if message and contact:
